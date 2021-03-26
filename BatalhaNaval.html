@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Batalha Naval</title>
+    <script>
+        
+        function BatalhaNaval(){
+            this.linhas;
+            this.colunas;
+            this.barcos;
+            this.numeroJogadas = 0;
+            this.numeroAcertos = 0;
+
+            BatalhaNaval.prototype.jogo = function(_linhas, _colunas, _barcos){
+                
+                this.linhas = _linhas;
+                this.colunas = _colunas;
+                this.barcos = _barcos;
+
+                if(this.linhas < 4)
+                    this.linhas = 4;
+                
+                if(this.colunas < 4)
+                    this.colunas = 4;
+
+                if(this.barcos < 3)
+                    this.barcos = 3;
+                
+                if(this.barcos > ((this.linhas*this.colunas)/2))
+                    this.barcos = ((this.linhas*this.colunas)/2);
+
+                var titulo = document.createElement("h1");
+                titulo.innerText = "Batalha Naval";
+                document.body.appendChild(titulo);
+
+                var tabela = document.createElement("table");
+                tabela.setAttribute("id", "tabela");
+                tabela.style.borderCollapse = "collapse";
+                tabela.style.border = "rgb(100,100,100) 1px solid";
+
+                for (let i = 0; i < this.linhas; i++) {
+                    var tr = document.createElement("tr");
+                    for (let j = 0; j < this.colunas; j++) {
+                        var td = document.createElement("td");
+                        td.style.border = "rgb(100,100,100) 1px solid";
+                        td.style.width = "50px";
+                        td.style.height = "50px";
+                        td.style.textAlign = "center";
+                        td.style.color = "rgb(50,50,50)";
+                        td.style.backgroundColor = "cyan";
+                        td.style.fontFamily = "monaco, Consolas, 'Lucida Console', monospace";
+                        this.clique = () => {
+                            
+                        }
+                        td.addEventListener("click", this.clique);
+                        tr.appendChild(td);
+                    }
+                    tabela.appendChild(tr);
+                }
+
+                document.body.appendChild(tabela);
+            }
+        }
+        addEventListener("load", function(){
+            var batalhanaval = new BatalhaNaval();
+            batalhanaval.jogo(5, 8, 23);
+            console.log(batalhanaval.barcos);
+        });
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

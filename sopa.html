@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sopa de Letras</title>
+</head>
+<body>
+    <script>
+        function Jogador(_nome){
+            this.nome = _nome;
+            this.pontuacao = 0;
+        }
+        function Jogo(){
+            this.jogador1 = null;
+            this.jogador2 = null;
+            this.palavras = [];
+            this.letras = [];
+            this.rodadas = 0;
+            this.vogais = "AEIOU".split("");
+            this.consoantes = "BCDFGHJKLMNPQRSTVXWYZ".split("");
+            this.alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+            
+            Jogo.prototype.letraAleatoria = function(tamanho){
+                
+                var aux = 4;
+                if(tamanho == 5){
+                    aux = 2;
+                }
+                for(let i=0;i<aux;i++){
+                    this.letras.push(this.vogais[(Math.floor(Math.random() * 5))]);
+                    this.letras.push(this.consoantes[(Math.floor(Math.random() * 21))]);
+                }
+                this.letras.push(this.alfabeto[(Math.floor(Math.random() * 26))]);
+                if(tamanho == 10){
+                    this.letras.push(this.alfabeto[(Math.floor(Math.random() * 26))]);
+                }
+            }
+
+            Jogo.prototype.validaPalavra = function(){
+
+            }
+
+            Jogo.prototype.montaTela = function(){
+                var box = document.createElement("div");
+                var divJogador1 = document.createElement("div");
+                var nome1 = document.createElement("p");
+                var pontuacao1 = document.createElement("p");
+                
+                pontuacao1.setAttribute("id", "p1");
+                
+                var divJogador2 = document.createElement("div");
+                var nome2 = document.createElement("p");
+                var pontuacao2 = document.createElement("p");
+                
+                pontuacao2.setAttribute("id", "p2");
+
+                nome1.innerText = this.jogador1.nome;
+                nome2.innerText = this.jogador2.nome;
+                pontuacao1.innerText = this.jogador1.pontuacao;
+                pontuacao2.innerText = this.jogador2.pontuacao;
+
+                divJogador1.appendChild(nome1);
+                divJogador1.appendChild(pontuacao1);
+                divJogador2.appendChild(nome2);
+                divJogador2.appendChild(pontuacao2);
+
+                box.appendChild(divJogador1);
+                box.appendChild(divJogador2);
+
+                var divTabuleiro = document.createElement("div");
+
+                var p = document.createElement("p");
+                p.innerText = this.letras;
+                p.setAttribute("id", "letras");
+
+                var ul = document.createElement("ul");
+                ul.setAttribute("id", "palavras");
+                
+                divTabuleiro.appendChild(p);
+                divTabuleiro.appendChild(ul);
+
+                var input = document.createElement("input");
+                input.setAttribute("id", "tentativa");
+                input.setAttribute("type", "text");
+
+                var inputH = document.createElement("input");
+                inputH.setAttribute("id", "jogador");
+                inputH.setAttribute("type", "hidden");
+                inputH.value = 1;
+
+                var botao = document.createElement("button");
+                botao.setAttribute("id", "jogar");
+                botao.setAttribute("type", "button");
+                botao.innerText = "Jogar";
+                
+                divTabuleiro.appendChild(input);
+                divTabuleiro.appendChild(botao);
+                divTabuleiro.appendChild(inputH);
+
+                box.appendChild(divTabuleiro);
+                
+                document.body.appendChild(box);
+            }
+
+            Jogo.prototype.defineRodadas = function(){
+                this.rodadas = Math.floor(Math.random() * 10+1);
+            }
+
+            Jogo.prototype.setJogadores = function(_nomeJogador1, _nomeJogador2){
+                this.jogador1 = new Jogador(_nomeJogador1);
+                this.jogador2 = new Jogador(_nomeJogador2);
+            }
+        }
+        var jogo = new Jogo();
+
+        jogo.setJogadores("Fernando", "Matheus");
+
+        jogo.letraAleatoria(10);
+
+        jogo.montaTela();
+        
+        var botao = document.getElementById("jogar");
+        botao.addEventListener("click", function(){
+            var inputArray = (document.getElementById("tentativa").value.toUpperCase()).split("");
+            var inputJogador = document.getElementById("jogador").value;
+            var sorteadas = jogo.letras;
+            var lista = jogo.palavras;
+            
+            var pontos = 0;
+
+            if(!lista.includes(inputArray.join(""))){
+                jogo.palavras.push(inputArray.join(""));
+                
+                var li = document.createElement("li");
+                li.innerText = inputArray.join("");
+                document.getElementById("palavras").appendChild(li);
+
+                for (let i=0;i<inputArray.length; i++) {
+                    var ocorrencia = sorteadas.indexOf(inputArray[i]);
+
+                    if(["M", "R", "S", "T"].includes(inputArray[i])){
+                        pontos += 1;
+                    }
+                    if(["C", "D", "L", "P"].includes(inputArray[i])){
+                        pontos += 2;
+                    }
+                    if(["B", "N"].includes(inputArray[i])){
+                        pontos += 3;
+                    }
+                    if(["F", "G", "V"].includes(inputArray[i])){
+                        pontos += 4;
+                    }
+                    if(["J", "H"].includes(inputArray[i])){
+                        pontos += 5;
+                    }
+                    if(["X", "Q", "Z"].includes(inputArray[i])){
+                        pontos += 8;
+                    }
+                    if(["A", "E", "I", "O", "U"].includes(inputArray[i])){
+                        pontos += 1;
+                    }
+                    if(["Y", "W", "K"].includes(inputArray[i])){
+                        pontos += 10;
+                    }
+
+                    if(ocorrencia != -1){
+                        sorteadas.splice(ocorrencia,1);
+                    }
+                }
+
+                if(inputJogador == 1){
+                    jogo.jogador1.pontuacao += pontos;
+                    document.getElementById("p1").innerText = jogo.jogador1.pontuacao;
+                    document.getElementById("jogador").value = 2;
+                }else{
+                    jogo.jogador2.pontuacao += pontos;
+                    document.getElementById("p2").innerText = jogo.jogador2.pontuacao;
+                    document.getElementById("jogador").value = 1;
+                }
+
+                console.log(document.getElementById("jogador").value);
+                jogo.letraAleatoria(5);
+
+                document.getElementById("letras").innerText = jogo.letras;
+            }else{
+                alert("Essa Palavra já foi Jogada!");
+            }
+
+            console.log(sorteadas);
+            //console.log(inputArray);
+        });
+    </script>
+</body>
+</html>

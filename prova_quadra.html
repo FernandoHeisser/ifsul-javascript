@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quadra</title>
+    <script>
+        function Quadra(){
+            this.nome;
+            this.cartas = [];
+            this.contador = 0;
+            this.resposta = [];
+
+            Quadra.prototype.embaralha = function(array){
+                var tamanho = array.length;
+                var i;
+                var aux;
+
+                while(tamanho){
+
+                    i = Math.floor(Math.random() * tamanho--);
+                    aux = array[tamanho];
+                    array[tamanho] = array[i];
+                    array[i] = aux;
+                }
+
+                return array;
+            }
+            Quadra.prototype.testa = function(){
+                if(this.resposta[0] == this.resposta[1] && this.resposta[0] == this.resposta[2] && this.resposta[0] == this.resposta[3]){
+                    console.log("venceu");
+                    var cartas = document.getElementsByClassName("carta");
+                    for(var carta of cartas){
+                        if(carta.innerText == this.resposta[0])
+                            carta.style.backgroundColor = "green";
+                    }
+                }
+                else{
+                    var intervalo = setInterval(() => {
+                        document.getElementById("container").remove();
+                        this.render();
+                        this.resposta = [];
+                        this.contador = 0;
+                        console.log("errou");
+                        clearInterval(intervalo);
+                    }, 3000);
+                }
+            }
+            Quadra.prototype.render = function(){
+                var container = document.createElement("div");
+                container.setAttribute("id", "container");
+                container.style.boxSizing = "border-box";
+                
+                for (let i = 0; i < this.cartas.length; i++) {
+                    var div = document.createElement("div");
+                    div.setAttribute("class", "carta");
+                    div.setAttribute("data-valor", this.cartas[i]);
+                    div.style.height = "200px";
+                    div.style.width = "150px";
+                    div.style.backgroundColor = "red";
+                    div.style.boxSizing = "border-box";
+                    div.style.margin = "1rem";
+                    div.style.cssFloat = "left";
+                    div.style.color = "white";
+                    div.style.fontFamily = "arial";
+                    div.style.fontSize = "6rem";
+                    div.style.textAlign = "center";
+                    div.style.paddingTop = "3rem";
+                    div.innerText = "?";
+                    var that = this;
+                    div.addEventListener("click", function (){
+                        if(this.innerText == "?"){
+                            this.innerText = this.getAttribute("data-valor");
+                            that.resposta[that.contador] = this.innerText;
+                            that.contador++;
+                        }
+                        if(that.contador == 4){
+                            that.testa();
+                        }
+                    });
+
+                    container.appendChild(div);
+                }
+                document.body.appendChild(container);
+            }
+        }
+        addEventListener("load", function(){
+
+            var input = document.createElement("input");
+            input.setAttribute("type", "text");
+            input.setAttribute("required", "required");
+            input.setAttribute("id", "nome");
+            input.setAttribute("placeholder", "Digite aqui seu nome");
+
+            var input2 = document.createElement("input");
+            input2.setAttribute("type", "number");
+            input2.setAttribute("id", "cartas");
+            input2.setAttribute("required", "required");
+            input2.setAttribute("placeholder", "Digite aqui o número de cartas");
+            input2.style.width = "200px";
+            
+            var botao = document.createElement("button");
+            botao.innerText = "Iniciar";
+            botao.addEventListener("click", () => {
+                if(input.value == ""){
+                    alert("Digite seu nome!");  
+                }else{
+                    if(input2.value < 1 || input2.value > 13){                    
+                        alert("Digite um número entre 0 e 14!");  
+                    }
+                    else{
+                        var quadra = new Quadra();
+                        quadra.nome = input.value;
+                        var j = 1;
+                        for(let i = 0; i < (input2.value*4); i+=4){
+                            quadra.cartas[i] = j;
+                            quadra.cartas[i+1] = j;
+                            quadra.cartas[i+2] = j;
+                            quadra.cartas[i+3] = j;
+                            j++;
+                        }
+                        quadra.embaralha(quadra.cartas);
+                        quadra.render();
+                    }
+                }
+            });
+
+            var div = document.createElement("div");
+            div.appendChild(input);
+            div.appendChild(input2);
+            div.appendChild(botao);
+
+            document.body.appendChild(div);
+
+        });
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
